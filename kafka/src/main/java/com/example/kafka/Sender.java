@@ -8,6 +8,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.Random;
 import java.util.UUID;
 
 /**
@@ -24,11 +25,12 @@ public class Sender {
 
   private Gson gson = new GsonBuilder().create();
 
+  Random random = new Random();
   //发送消息方法
   public void send() {
     Message message = new Message();
     message.setId(System.currentTimeMillis());
-    message.setMsg(UUID.randomUUID().toString());
+    message.setMsg(random.nextInt(100)+"");
     message.setSendTime(new Date());
     log.info("+++++++++++++++++++++  message = {}", gson.toJson(message));
     kafkaTemplate.send("Shakespeare", gson.toJson(message));
