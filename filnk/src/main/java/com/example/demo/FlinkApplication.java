@@ -7,6 +7,7 @@ import org.apache.flink.api.common.serialization.SimpleStringSchema;
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.streaming.api.CheckpointingMode;
+import org.apache.flink.streaming.api.TimeCharacteristic;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.streaming.api.functions.sink.SinkFunction;
@@ -31,7 +32,7 @@ public class FlinkApplication {
 
     StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
     env.setParallelism(1);
-//    env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
+    env.setStreamTimeCharacteristic(TimeCharacteristic.EventTime);
     env.getCheckpointConfig().setCheckpointingMode(CheckpointingMode.EXACTLY_ONCE);
 
     Properties kafkaProps = new Properties();
@@ -71,7 +72,7 @@ public class FlinkApplication {
             return value.f0;
           }
         })
-        .timeWindow(Time.milliseconds(30))
+        .timeWindow(Time.seconds(30))
         .sum(1)
         .addSink(new SinkFunction<Tuple2<String, Integer>>() {
           @Override
